@@ -85,5 +85,4 @@ For major changes, open an issue first to discuss what you’d like to add.
 📜 License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-👉 This README gives your project a professional face on GitHub and makes it easy for collaborators, recruiters, or investors to understand its scope.
-Would you like me to also prepare a visual banner (ASCII or markdown‑styled) for the top of the README so it looks more eye‑catching when someone opens your repo?
+
