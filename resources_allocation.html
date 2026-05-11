@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>🌾 Smart Resource Allocation Enhanced</title>
+<style>
+  /* Base Styles */
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+  body{
+    transition:0.4s;
+    background:#f5f7fa;
+    color:#222;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  nav{
+    display:flex;justify-content:space-between;padding:15px 30px;background:#2e7d32;color:white;position:sticky;top:0;z-index:1000;
+  }
+  nav h2 {
+    user-select:none;
+  }
+  nav button{
+    background:none;
+    border:none;
+    color:white;
+    font-size: 1.3rem;
+    cursor:pointer;
+    user-select:none;
+  }
+  .hero{
+    height:80vh;
+    background:url("https://images.unsplash.com/photo-1500382017468-9049fed747ef") no-repeat center/cover;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    text-align:center;
+    user-select:none;
+  }
+  .hero h1{
+    font-size:50px;
+    background:rgba(0,0,0,0.5);
+    padding:20px;
+    border-radius:10px;
+  }
+  main{
+    flex: 1;
+    width: 95%;
+    max-width: 1100px;
+    margin: 25px auto 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(320px,1fr));
+    gap: 20px;
+  }
+  section.card{
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(85, 135, 73, 0.3);
+    padding: 20px 22px 28px;
+    display: flex;
+    flex-direction: column;
+  }
+  section.card h2{
+    font-size:1.9rem;
+    margin-bottom: 16px;
+    color:#2e7d32;
+    display:flex;
+    align-items: center;
+    gap:10px;
+  }
+  label{
+    font-weight:700;
+    font-size:1.1rem;
+    margin-top:14px;
+    user-select:none;
+  }
+  input[type=number], input[type=date], input[type=text], select, textarea{
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 2px solid #a5d6a7;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.25s ease;
+  }
+  input[type=number]:focus, input[type=date]:focus, input[type=text]:focus,
+  select:focus, textarea:focus{
+    border-color:#388e3c;
+    outline:none;
+  }
+  textarea{resize:vertical;}
+  button{
+    background:#43a047;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:12px 26px;
+    font-size:1.15rem;
+    font-weight:700;
+    margin-top: 22px;
+    cursor:pointer;
+    box-shadow: 0 6px 12px rgba(67, 160, 71, 0.3);
+    user-select:none;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+  }
+  button:hover, button:focus{
+    background:#2e7d32;
+    outline:none;
+  }
+  p.result, p.notification-text{
+    font-weight:700;
+    font-size:1.15rem;
+    margin-top:14px;
+    color:#1b5e20;
+    min-height:2.5em;
+    user-select:text;
+  }
+  .grid {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+  .card-small {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgb(85 135 73 / 0.2);
+    padding: 14px;
+    background: white;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-small img {
+    width: 100%;
+    height: 90px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  .card-small h3 {
+    margin-top: 10px;
+    font-weight: 700;
+    color: #2e7d32;
+    user-select:none;
+    text-align: center;
+  }
+  .dark{
+    background:#121212;
+    color:white;
+  }
+  .dark section.card,
+  .dark .card-small{
+    background:#1e1e1e;
+  }
+  .dark nav{
+    background:#000;
+  }
+  .dark button {
+    background: #4caf50;
+    color: #121212;
+  }
+  .dark input, .dark select, .dark textarea {
+    background: #222;
+    color: white;
+    border-color: #4caf50;
+  }
+  #notification{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #2e7d32;
+    color: white;
+    padding: 16px 28px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    font-weight: 700;
+    font-size: 1rem;
+    display: none;
+    align-items: center;
+    gap: 15px;
+    z-index: 99;
+    user-select:none;
+  }
+  #chart{
+    height: 220px;
+    background: linear-gradient(to top, #66bb6a 0%, #c8e6c9 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 12px;
+    border-radius: 12px;
+  }
+  .bar{
+    width: 25px;
+    margin: 0 6px;
+    background: #1b5e20;
+    border-radius: 6px 6px 0 0;
+    transition: height 0.3s ease;
+  }
+  #voiceBtn{
+    margin-left: 12px;
+  }
+  #voiceBtn.listening{
+    background: #f44336;
+  }
+  .share-btns{
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .share-btn{
+    background: #4caf50;
+    border-radius: 8px;
+    color: white;
+    padding: 6px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+  }
+  .share-btn:hover{
+    background: #2e7d32;
+  }
+</style>
+</head>
+
+<body>
+<nav>
+  <h2 id="title">🌾 Smart Resource System</h2>
+  <button aria-label="Toggle Dark Mode" onclick="toggleTheme()">🌗</button>
+</nav>
+
+<div class="hero">
+  <h1 id="heroText">Smart Farming Starts Here 🚜</h1>
+</div>
+
+<main>
+
+<!-- Machines Marketplace -->
+<section class="card" aria-label="Machines Marketplace">
+  <h2>🛠️ Machines Marketplace</h2>
+  <div class="grid" id="machines"></div>
+</section>
+
+<!-- Labor Marketplace -->
+<section class="card" aria-label="Labor Marketplace">
+  <h2>👨‍🌾 Labor Portal</h2>
+  <div class="grid" id="labor"></div>
+</section>
+
+<!-- Worker Registration -->
+<section class="card" aria-label="Register as Worker">
+  <h2>📝 Register as Worker</h2>
+  <input id="wname" placeholder="Name" aria-label="Worker Name" />
+  <input id="wskill" placeholder="Skill" aria-label="Worker Skill" />
+  <input id="wlocation" placeholder="Location" aria-label="Worker Location" />
+  <button onclick="addWorker()">Register</button>
+</section>
+
+<!-- AI Crop Suggestion -->
+<section class="card" aria-label="AI Crop Suggestion">
+  <h2>🤖 AI Crop Suggestion</h2>
+  <label for="soil">Soil Type</label>
+  <select id="soil" aria-label="Select Soil Type"><option>Clay</option><option>Sandy</option><option>Loamy</option></select>
+  <label for="weather">Weather Condition</label>
+  <select id="weather" aria-label="Select Weather Condition"><option>Hot</option><option>Moderate</option><option>Rainy</option></select>
+  <button onclick="suggestCrop()">Suggest</button>
+  <h3 id="result" tabindex="0" aria-live="polite"></h3>
+</section>
+
+<!-- Real-Time Weather + Location -->
+<section class="card" aria-label="Real-Time Weather">
+  <h2>☀️ Real-Time Weather</h2>
+  <label for="weatherCity">Enter your city:</label>
+  <input type="text" id="weatherCity" placeholder="E.g., Delhi" aria-label="City for weather" />
+  <button onclick="fetchWeather()">Get Weather</button>
+  <p id="weatherResult" aria-live="polite" style="font-weight:700; margin-top:10px;"></p>
+</section>
+
+<!-- Dashboard / Analytics -->
+<section class="card" aria-label="Resource Analytics Dashboard">
+  <h2>📊 Resource Utilization Dashboard</h2>
+  <p>This dashboard visualizes your farm's productivity and resource usage trends.</p>
+  <h3>📈 Usage Chart (Last 7 days)</h3>
+  <div id="chart" aria-label="Resource usage chart"></div>
+</section>
+
+<!-- Notifications -->
+<div id="notification" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+</main>
+
+<footer>
+  &copy; 2026 Smart Farm Solutions 🌱 | Empowering modern farmers
+</footer>
+
+<script>
+// Notification System
+const notification = document.getElementById('notification');
+function showNotification(message, duration=3000){
+  notification.textContent = message;
+  notification.style.display = 'flex';
+  clearTimeout(notification._timeout);
+  notification._timeout = setTimeout(() => {
+    notification.style.display = 'none';
+  }, duration);
+}
+
+// Data
+let machines=[
+  {name:"Tractor",img:"https://images.unsplash.com/photo-1592982537447-7440770cbfc9"},
+  {name:"Harvester",img:"https://images.unsplash.com/photo-1625246333195-78d9c38ad449"},
+  {name:"Seeder",img:"https://images.unsplash.com/photo-1579684385127-1ef15d508118"},
+  {name:"Sprayer",img:"https://images.unsplash.com/photo-1589927986089-35812388d1f4"}
+];
+let labor=[
+  {name:"Ramesh",skill:"Plowing",location:"Delhi"},
+  {name:"Suresh",skill:"Harvesting",location:"Punjab"}
+];
+// Store labor in localStorage for persistence
+const laborStorageKey = 'smartFarmLabor';
+function saveLabor(){
+  localStorage.setItem(laborStorageKey, JSON.stringify(labor));
+}
+function loadLabor(){
+  const stored = localStorage.getItem(laborStorageKey);
+  if(stored) labor = JSON.parse(stored);
+}
+
+// Load machines and labor
+function loadAll(){
+  document.getElementById("machines").innerHTML=machines.map(m=>`
+    <div class="card-small" role="article" tabindex="0">
+      <img alt="${m.name}" src="${m.img}">
+      <h3>${m.name}</h3>
+      <button aria-label="Rent ${m.name}" onclick="showNotification('Machine booked: ${m.name}')">Rent</button>
+    </div>`).join("");
+  
+  document.getElementById("labor").innerHTML=labor.map(l=>`
+    <div class="card-small" role="article" tabindex="0">
+      <h3>${l.name}</h3>
+      <p>${l.skill}</p>
+      <p>${l.location}</p>
+      <button aria-label="Hire ${l.name}" onclick="showNotification('Worker hired: ${l.name}')">Hire</button>
+    </div>`).join("");
+}
+
+loadLabor();
+loadAll();
+
+// Worker Registration
+function addWorker(){
+  let name=document.getElementById('wname').value.trim();
+  let skill=document.getElementById('wskill').value.trim();
+  let loc=document.getElementById('wlocation').value.trim();
+  if(name.length<2){
+    alert("Please enter a valid name.");
+    return;
+  }
+  if(skill.length<2){
+    alert("Please enter a valid skill.");
+    return;
+  }
+  labor.push({name, skill, location: loc || "Unknown"});
+  saveLabor();
+  loadAll();
+  showNotification("Worker Registered Successfully");
+  document.getElementById('wname').value="";
+  document.getElementById('wskill').value="";
+  document.getElementById('wlocation').value="";
+}
+
+// AI Crop Suggestion
+function suggestCrop(){
+  let soil=document.getElementById("soil").value;
+  let weather=document.getElementById("weather").value;
+  let crop="Vegetables";
+  if(soil==="Loamy" && weather==="Moderate") crop="Wheat 🌾";
+  else if(soil==="Clay" && weather==="Rainy") crop="Rice 🍚";
+  else if(soil==="Sandy" && weather==="Hot") crop="Millets 🌱";
+  document.getElementById("result").innerText="Best Crop: "+crop;
+  showNotification("AI Suggestion Generated");
+}
+
+// Simple Usage Chart with random data (simulate resource usage)
+const chartEl = document.getElementById('chart');
+function generateChart(){
+  let html = '';
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  for(let i=0;i<7;i++){
+    let height = 40 + Math.random()*130;
+    html += `<div class="bar" style="height:${height}px" title="${days[i]}: ${Math.round(height)} units"></div>`;
+  }
+  chartEl.innerHTML = html;
+}
+generateChart();
+
+// Theme toggle
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  let dark = document.body.classList.contains('dark');
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+}
+function loadTheme(){
+  const t = localStorage.getItem('theme');
+  if(t==='dark') document.body.classList.add('dark');
+}
+loadTheme();
+
+// Real-Time Weather with OpenWeatherMap API (Demo Key)
+async function fetchWeather(){
+  const city = document.getElementById('weatherCity').value.trim();
+  const resultEl = document.getElementById('weatherResult');
+  if(city.length<2){
+    alert('Please enter a valid city name.');
+    return;
+  }
+  resultEl.textContent = "Fetching weather...";
+  try{
+    const apiKey = '3a03246c279783d6755da88c82cca84e'; // Demo key, replace with your own for production
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('City not found');
+    const data = await res.json();
+    const description = data.weather[0].description;
+    const temp = data.main.temp;
+    resultEl.textContent = `Current weather in ${city}: ${temp.toFixed(1)}°C, ${description}`;
+    showNotification(`Weather updated for ${city}`);
+  }catch(e){
+    resultEl.textContent = 'Unable to fetch weather data. Try again later.';
+  }
+}
+</script>
+</body>
+</html>

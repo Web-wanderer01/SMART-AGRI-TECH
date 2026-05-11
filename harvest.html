@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>🌾 Harvest & Market Readiness - Engaging & Impactful</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f9f4;
+    color: #256029;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: #2e7d32;
+    color: white;
+    text-align: center;
+    padding: 25px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header h1 {
+    margin: 0 0 5px;
+    font-size: 2.5rem;
+    user-select: none;
+  }
+  header p {
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+  main {
+    flex: 1;
+    width: 95%;
+    max-width: 1100px;
+    margin: 25px auto 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  @media(max-width: 800px){
+    main {
+      grid-template-columns: 1fr;
+      width: 90%;
+    }
+  }
+  section.card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(85, 135, 73, 0.3);
+    padding: 25px 24px 30px;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+  section.card h2 {
+    font-size: 1.9rem;
+    margin-bottom: 14px;
+    color: #2e7d32;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  label {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 14px;
+  }
+  input[type=number], input[type=date], input[type=text], select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 2px solid #a5d6a7;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.25s ease;
+  }
+  input[type=number]:focus, input[type=date]:focus, input[type=text]:focus,
+  select:focus, textarea:focus {
+    border-color: #388e3c;
+    outline: none;
+  }
+  textarea {
+    resize: vertical;
+  }
+  button {
+    background: #43a047;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 26px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-top: 20px;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(67, 160, 71, 0.3);
+    user-select: none;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+  }
+  button:hover, button:focus {
+    background: #2e7d32;
+    outline: none;
+  }
+  p.result, p.sensor-output, p.tip, p.notification-text {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-top: 12px;
+    color: #1b5e20;
+    min-height: 2.5em;
+    user-select: text;
+  }
+  #notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #81c784;
+    color: #1b5e20;
+    padding: 14px 28px;
+    border-radius: 40px;
+    box-shadow: 0 5px 20px rgba(46, 125, 50, 0.6);
+    font-weight: 700;
+    font-size: 1rem;
+    display: none;
+    align-items: center;
+    gap: 15px;
+    z-index: 99;
+  }
+  #calendar {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid #a5d6a7;
+    user-select: none;
+  }
+  #calendar th, #calendar td {
+    border: 1px solid #a5d6a7;
+    padding: 8px 5px;
+    text-align: center;
+    font-weight: 600;
+    color: #2e7d32;
+    cursor: default;
+  }
+  #calendar th {
+    background: #c8e6c9;
+    user-select: none;
+  }
+  #calendar td.activity {
+    background: #a5d6a7;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  #calendar td.activity:hover,
+  #calendar td.activity:focus {
+    background: #7cb342;
+    outline: none;
+  }
+  #tipsFeed, #forumMessages {
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 2px solid #a5d6a7;
+    border-radius: 8px;
+    background: #e8f5e9;
+    white-space: pre-wrap;
+    font-weight: 600;
+    font-size: 1rem;
+    user-select: text;
+  }
+  #voiceBtn {
+    margin-left: 10px;
+    background: #81c784;
+    font-weight: 700;
+    user-select: none;
+  }
+  #voiceBtn.listening {
+    background: #f44336;
+  }
+  code {
+    font-family: 'Segoe UI Mono', Consolas, monospace;
+    background: #dcedc1;
+    border-radius: 6px;
+    padding: 1px 5px;
+  }
+  .share-btns {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .share-btn {
+    background: #4caf50;
+    border-radius: 8px;
+    color: white;
+    padding: 6px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    user-select: none;
+    transition: background-color 0.25s ease;
+  }
+  .share-btn:hover {
+    background: #2e7d32;
+  }
+  footer {
+    background: #2e7d32;
+    color: #c8e6c9;
+    text-align: center;
+    padding: 18px 10px;
+    font-weight: 600;
+    margin-top: auto;
+    box-shadow: 0 -2px 6px rgba(46,125,50,.4);
+    font-size: 0.95rem;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+<header role="banner">
+  <h1>🌾 Harvest & Market Readiness - Engaging & Impactful</h1>
+  <p>Maximize profit, plan harvest & connect with community</p>
+</header>
+
+<main role="main" aria-label="Farm tools and community">
+
+  <!-- Profit Calculator with Social Share -->
+  <section class="card" aria-labelledby="profitCalcTitle">
+    <h2 id="profitCalcTitle">💰 Profitability Calculator</h2>
+    <label for="seedCost">Seed Cost (₹):</label>
+    <input type="number" id="seedCost" aria-describedby="profitCalcDesc" min="0" step="0.01">
+    <label for="laborCost">Labor Cost (₹):</label>
+    <input type="number" id="laborCost" min="0" step="0.01">
+    <label for="waterCost">Water Cost (₹):</label>
+    <input type="number" id="waterCost" min="0" step="0.01">
+    <label for="marketPrice">Market Price per Unit (₹):</label>
+    <input type="number" id="marketPrice" min="0" step="0.01">
+    <label for="quantity">Quantity (Units):</label>
+    <input type="number" id="quantity" min="0" step="1">
+    <button id="calcProfitBtn" aria-describedby="profitCalcDesc">Calculate Profit</button>
+    <p id="profitResult" class="result" role="alert" aria-live="polite"></p>
+    <div class="share-btns" aria-label="Share profit result on social media" style="display:none;">
+      <a href="#" id="shareWhatsApp" class="share-btn" target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp">WhatsApp</a>
+      <a href="#" id="shareTwitter" class="share-btn" target="_blank" rel="noopener noreferrer" aria-label="Share on Twitter">Twitter</a>
+      <a href="#" id="shareFacebook" class="share-btn" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook">Facebook</a>
+    </div>
+  </section>
+
+  <!-- Harvest Timer with Animated Progress Bar -->
+  <section class="card" aria-labelledby="harvestTimerTitle">
+    <h2 id="harvestTimerTitle">⏳ Harvest Timer</h2>
+    <label for="uploadDate">Crop Image Upload Date:</label>
+    <input type="date" id="uploadDate" max="">
+    <button id="calcHarvestBtn">Estimate Harvest Time</button>
+    <p id="harvestResult" class="result" role="alert" aria-live="polite"></p>
+    <div aria-hidden="true" style="margin-top:15px;">
+      <div id="progressBar" style="width: 100%; height: 20px; border-radius: 10px; background: #dcedc1; overflow: hidden;">
+        <div id="progressFill" style="height: 100%; width: 0; background: linear-gradient(90deg, #4caf50, #8bc34a); transition: width 0.3s ease;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gamification badges -->
+  <section class="card" aria-labelledby="badgesTitle">
+    <h2 id="badgesTitle">🏅 Achievements & Gamification</h2>
+    <p>Earn badges for engaging with the app regularly!</p>
+    <div id="badges" style="display:flex; flex-wrap: wrap; gap: 12px; margin-top: 10px;">
+      <!-- badges inserted by script -->
+    </div>
+  </section>
+
+  <!-- Tips Feed & Videos -->
+  <section class="card" aria-labelledby="tipsTitle">
+    <h2 id="tipsTitle">📖 Farming Tips & Educational Videos</h2>
+    <div id="tipsFeed" role="feed" aria-live="polite" aria-atomic="true" tabindex="0" style="min-height:120px;"></div>
+    <iframe id="tipVideo" src="https://www.youtube.com/embed/uZJeK19THps" title="Farming Tips Video" style="width:100%; margin-top:12px; border-radius: 10px; height: 210px;" allowfullscreen></iframe>
+  </section>
+
+  <!-- Crop Growth Timeline & Calendar -->
+  <section class="card" aria-labelledby="calendarTitle">
+    <h2 id="calendarTitle">📅 Crop Growth Timeline & Planning</h2>
+    <table id="calendar" aria-label="Crop activities calendar" role="grid" tabindex="0" aria-readonly="true">
+      <thead>
+        <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
+      </thead>
+      <tbody id="calendarBody"></tbody>
+    </table>
+    <label for="activityDate">Add Activity Date:</label>
+    <input type="date" id="activityDate" aria-required="true" />
+    <label for="activityType">Activity Type:</label>
+    <select id="activityType" aria-required="true" aria-label="Select Activity Type">
+      <option value="Planting">Planting</option>
+      <option value="Fertilizing">Fertilizing</option>
+      <option value="Irrigating">Irrigating</option>
+      <option value="Pesticide Application">Pesticide Application</option>
+      <option value="Harvest">Harvest</option>
+    </select>
+    <button id="addActivityBtn">Add Activity</button>
+    <p class="result" id="activityMsg" aria-live="polite"></p>
+  </section>
+
+  <!-- Basic Forum & Chatbox -->
+  <section class="card" aria-labelledby="forumTitle">
+    <h2 id="forumTitle">💬 Farmer Forum & Q&A Chatbox</h2>
+    <div id="forumMessages" role="log" aria-live="polite" aria-relevant="additions" tabindex="0" style="min-height: 130px;"></div>
+    <label for="forumInput">Ask a question or share advice:</label>
+    <textarea id="forumInput" rows="3" aria-label="Forum input"></textarea>
+    <button id="sendForumBtn">Send</button>
+  </section>
+
+  <!-- Budget & Cost Calculator -->
+  <section class="card" aria-labelledby="budgetTitle">
+    <h2 id="budgetTitle">💰 Budget & Cost Calculator</h2>
+    <label for="seedCostBudget">Seed Cost (per hectare, ₹):</label>
+    <input type="number" id="seedCostBudget" step="0.01" min="0" value="50">
+    <label for="waterCostBudget">Water Cost (per liter, ₹):</label>
+    <input type="number" id="waterCostBudget" step="0.0001" min="0" value="0.001">
+    <label for="fertilizerCostBudget">Fertilizer Cost (per hectare, ₹):</label>
+    <input type="number" id="fertilizerCostBudget" step="0.01" min="0" value="30">
+    <label for="pesticideCostBudget">Pesticide Cost (per hectare, ₹):</label>
+    <input type="number" id="pesticideCostBudget" step="0.01" min="0" value="25">
+    <button id="calcBudgetBtn">Calculate Estimated Budget</button>
+    <p id="budgetResult" class="result" aria-live="polite"></p>
+  </section>
+
+  <!-- Voice Input & Alerts -->
+  <section class="card" aria-labelledby="voiceTitle">
+    <h2 id="voiceTitle">🗣️ Voice Input & Alerts</h2>
+    <label for="voiceCommand">Click the microphone and speak a command (e.g., "calculate profit")</label><br />
+    <button id="voiceBtn" aria-live="polite" aria-pressed="false" aria-label="Start voice input">🎙️ Start Listening</button>
+    <p id="voiceStatus" class="result" aria-live="polite"></p>
+  </section>
+
+</main>
+
+<div id="notification" role="alert" aria-live="assertive" aria-atomic="true" class="notification-text"></div>
+
+<footer role="contentinfo">
+  &copy; 2026 Smart Farm Solutions 🌱 | Designed for Gen Z & future farmers
+</footer>
+
+<script>
+  //=== Notifications ===
+  const notification = document.getElementById('notification');
+  function showNotification(msg, timeout=6000){
+    notification.textContent = msg;
+    notification.style.display = 'flex';
+    setTimeout(() => {
+      notification.style.display = 'none';
+    }, timeout);
+  }
+
+  //==== Profitability Calculator + Social Share ====
+  const calcProfitBtn = document.getElementById('calcProfitBtn');
+  const profitResult = document.getElementById('profitResult');
+  const shareBtnsDom = document.querySelector('.share-btns');
+  const shareWhatsapp = document.getElementById('shareWhatsApp');
+  const shareTwitter = document.getElementById('shareTwitter');
+  const shareFacebook = document.getElementById('shareFacebook');
+
+  function calculateProfit(){
+    const seed = parseFloat(document.getElementById("seedCost").value) || 0;
+    const labor = parseFloat(document.getElementById("laborCost").value) || 0;
+    const water = parseFloat(document.getElementById("waterCost").value) || 0;
+    const price = parseFloat(document.getElementById("marketPrice").value) || 0;
+    const qty = parseFloat(document.getElementById("quantity").value) || 0;
+
+    if (seed < 0 || labor < 0 || water < 0 || price < 0 || qty < 0) {
+      profitResult.textContent = "⚠️ Please enter valid non-negative numbers.";
+      shareBtnsDom.style.display = "none";
+      return;
+    }
+
+    const totalCost = seed + labor + water;
+    const revenue = price * qty;
+    const profit = revenue - totalCost;
+
+    let message = "";
+    if (profit > 0) {
+      message = `✅ Expected Profit: ₹${profit.toFixed(2)}`;
+    } else if (profit === 0) {
+      message = `⚖️ Break-even (No profit, no loss)`;
+    } else {
+      message = `❌ Loss: ₹${Math.abs(profit).toFixed(2)}`;
+    }
+    profitResult.textContent = message;
+    shareBtnsDom.style.display = profit !== 0 ? 'flex' : 'none';
+
+    // Prepare share URLs
+    const shareText = encodeURIComponent(`My crop profit estimation: ${message} 🎉🌾 #SmartFarm`);
+    const pageUrl = encodeURIComponent(location.href);
+
+    shareWhatsapp.href = `https://wa.me/?text=${shareText}`;
+    shareTwitter.href = `https://twitter.com/intent/tweet?text=${shareText}&url=${pageUrl}`;
+    shareFacebook.href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}&quote=${shareText}`;
+  }
+  calcProfitBtn.addEventListener('click', calculateProfit);
+
+  //=== Harvest Timer & Animated Progress Bar ===
+  const calcHarvestBtn = document.getElementById('calcHarvestBtn');
+  const uploadDateInput = document.getElementById('uploadDate');
+  const harvestResult = document.getElementById('harvestResult');
+  const progressFill = document.getElementById('progressFill');
+
+  // Set max date today for uploadDate input
+  const todayDateISO = new Date().toISOString().split('T')[0];
+  uploadDateInput.setAttribute('max', todayDateISO);
+
+  function calculateHarvest(){
+    const dateVal = uploadDateInput.value;
+    if(!dateVal){
+      harvestResult.textContent = "⚠️ Please select a date";
+      progressFill.style.width = '0%';
+      return;
+    }
+    const uploadDate = new Date(dateVal);
+    const now = new Date();
+
+    // Crop growth window = 90 days (80 to 100 days harvest window)
+    const growthCycleDays = 90;
+    const harvestStartDay = 80, harvestEndDay = 100;
+    const harvestStart = new Date(uploadDate);
+    harvestStart.setDate(uploadDate.getDate() + harvestStartDay);
+    const harvestEnd = new Date(uploadDate);
+    harvestEnd.setDate(uploadDate.getDate() + harvestEndDay);
+
+    const options = { year:"numeric", month:"short", day:"numeric" };
+
+    // Calculate progress % from uploadDate to now within growth window
+    let progressPercent = 0;
+    if(now > uploadDate){
+      const totalMs = (uploadDate.getTime() + growthCycleDays*24*60*60*1000) - uploadDate.getTime();
+      const passedMs = now.getTime() - uploadDate.getTime();
+      progressPercent = Math.min(100, Math.max(0, (passedMs / totalMs)*100));
+    }
+    progressFill.style.width = progressPercent + '%';
+
+    if(now < harvestStart){
+      harvestResult.textContent = `🌱 Growth phase. Best harvest window: ${harvestStart.toLocaleDateString(undefined, options)} to ${harvestEnd.toLocaleDateString(undefined, options)}`;
+    } else if(now >= harvestStart && now <= harvestEnd){
+      harvestResult.textContent = `🌾 Ready to harvest! Harvest window: Today to ${harvestEnd.toLocaleDateString(undefined, options)}`;
+    } else if(now > harvestEnd){
+      harvestResult.textContent = `⚠️ Harvest time over. Consider harvesting immediately or crop may spoil.`;
+    } else {
+      harvestResult.textContent = `Awaiting upload date.`;
+    }
+  }
+  calcHarvestBtn.addEventListener('click', calculateHarvest);
+
+  //=== Gamification & Badges ===
+  const badgesContainer = document.getElementById('badges');
+  const badges = [
+    { id: 'firstCalc', name: '🧮 First Calculation Completed', condition: false },
+    { id: 'dailyVisit', name: '📅 Visited 3 Days in a Row', condition: false },
+    { id: 'forumCheer', name: '💬 Posted Forum Message', condition: false },
+  ];
+
+  // Store badges in localStorage
+  const badgesKey = 'farmBadges';
+  function loadBadges() {
+    const stored = localStorage.getItem(badgesKey);
+    if(stored) {
+      const saved = JSON.parse(stored);
+      badges.forEach(b => {
+        if(b.id in saved) b.condition = saved[b.id];
+      });
+    }
+  }
+  function saveBadges() {
+    const toSave = {};
+    badges.forEach(b => toSave[b.id] = b.condition);
+    localStorage.setItem(badgesKey, JSON.stringify(toSave));
+  }
+  function renderBadges(){
+    badgesContainer.innerHTML = '';
+    badges.forEach(b => {
+      const div = document.createElement('div');
+      div.style.padding = '8px 12px';
+      div.style.borderRadius = '8px';
+      div.style.backgroundColor = b.condition ? '#a5d6a7' : '#c8e6c9';
+      div.style.color = b.condition ? '#2e7d32' : '#567d46';
+      div.style.fontWeight = '700';
+      div.style.cursor = 'default';
+      div.textContent = b.condition ? b.name : '🔒 ' + b.name;
+      badgesContainer.appendChild(div);
+    });
+  }
+  loadBadges();
+  renderBadges();
+
+  // Update badges on actions
+  function unlockBadge(id){
+    const badge = badges.find(b=>b.id===id);
+    if(badge && !badge.condition){
+      badge.condition = true;
+      saveBadges();
+      renderBadges();
+      showNotification(`🏅 Badge unlocked: ${badge.name}`, 6000);
+    }
+  }
+
+  // Unlock firstCalc badge when profit calc done
+  calcProfitBtn.addEventListener('click', () => { 
+    unlockBadge('firstCalc');
+  });
+
+  // Track daily visits for dailyVisit badge
+  const visitKey = 'lastVisitDate';
+  function trackVisit() {
+    const todayStr = new Date().toISOString().slice(0,10);
+    const lastVisit = localStorage.getItem(visitKey);
+    const visitsStr = localStorage.getItem('visitStreak') || '{}';
+    let visits = JSON.parse(visitsStr);
+    if(lastVisit !== todayStr){
+      visits[todayStr]=true;
+      localStorage.setItem(visitKey, todayStr);
+      localStorage.setItem('visitStreak', JSON.stringify(visits));
+    }
+    checkVisitStreak(visits);
+  }
+  function checkVisitStreak(visits){
+    // check last 3 days visited
+    const today = new Date();
+    const oneDayMs = 24*60*60*1000;
+    let count = 0;
+    for(let i=0;i<3;i++){
+      const d = new Date(today.getTime() - i*oneDayMs);
+      const ds = d.toISOString().slice(0,10);
+      if(visits[ds]) count++;
+      else break;
+    }
+    if(count >= 3){
+      unlockBadge('dailyVisit');
+    }
+  }
+  trackVisit();
+
+  // Unlock forum badge on post
+  //=== Forum Chatbox ===
+  const forumMessagesDiv = document.getElementById('forumMessages');
+  const forumInput = document.getElementById('forumInput');
+  const sendForumBtn = document.getElementById('sendForumBtn');
+  const forumKey = 'smartFarmForumHistory';
+  let forumHistory = JSON.parse(localStorage.getItem(forumKey)) || [];
+
+  function renderForum(){
+    forumMessagesDiv.innerHTML = '';
+    forumHistory.forEach(msg => {
+      const p = document.createElement('p');
+      const userSpan = document.createElement('strong');
+      userSpan.textContent = msg.user + ': ';
+      p.appendChild(userSpan);
+      p.appendChild(document.createTextNode(msg.text));
+      forumMessagesDiv.appendChild(p);
+    });
+    forumMessagesDiv.scrollTop = forumMessagesDiv.scrollHeight;
+  }
+  renderForum();
+
+  sendForumBtn.addEventListener('click', () => {
+    let text = forumInput.value.trim();
+    if(!text) return;
+    forumHistory.push({user: "You", text});
+    localStorage.setItem(forumKey, JSON.stringify(forumHistory));
+    renderForum();
+    forumInput.value = '';
+
+    unlockBadge('forumCheer'); // unlock badge on forum post
+
+    // Very simple bot response
+    setTimeout(() => {
+      let response = "Thanks for your message! Please check with your local farming community for more advice.";
+      const ltext = text.toLowerCase();
+      if(ltext.includes("water")){
+        response = "Remember to water crops early morning or late evening to reduce evaporation.";
+      } else if(ltext.includes("pest")){
+        response = "Neem oil and natural remedies can help with common pests.";
+      } else if(ltext.includes("fertilizer")){
+        response = "Balanced NPK fertilization boosts crop yield.";
+      }
+      forumHistory.push({user: "FarmBot", text: response});
+      localStorage.setItem(forumKey, JSON.stringify(forumHistory));
+      renderForum();
+    }, 1300);
+  });
+
+  //=== Tips Feed & Videos ===
+  const tipsFeed = document.getElementById('tipsFeed');
+  const farmingTips = [
+    "Rotate crops annually to improve soil fertility.",
+    "Use organic compost to enrich your soil naturally.",
+    "Water early morning or late evening to reduce evaporation.",
+    "Regularly inspect crops for pests to reduce damage.",
+    "Plant cover crops during off-season to prevent soil erosion.",
+    "Use drip irrigation to save water and improve efficiency.",
+    "Record all farm activities for better planning."
+  ];
+  let tipIndex = 0;
+  function showTip(){
+    tipsFeed.textContent = farmingTips[tipIndex];
+    tipIndex = (tipIndex + 1) % farmingTips.length;
+  }
+  showTip();
+  setInterval(showTip, 12000);
+
+  //=== Crop Growth Timeline & Calendar ===
+  const calendarBody = document.getElementById('calendarBody');
+  const activityDateInput = document.getElementById('activityDate');
+  const activityTypeSelect = document.getElementById('activityType');
+  const activityMsg = document.getElementById('activityMsg');
+  const calendarActivitiesKey = 'smartFarmCalendarActivities';
+  let calendarActivities = JSON.parse(localStorage.getItem(calendarActivitiesKey)) || {};
+
+  function generateCalendar(year, month){
+    calendarBody.innerHTML = '';
+    const date = new Date(year, month, 1);
+    const firstDay = date.getDay();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+
+    let tr = document.createElement('tr');
+    for(let i=0; i < firstDay; i++) tr.appendChild(document.createElement('td'));
+    for(let day=1; day <= daysInMonth; day++){
+      if(tr.children.length === 7){
+        calendarBody.appendChild(tr);
+        tr = document.createElement('tr');
+      }
+      const td = document.createElement('td');
+      td.textContent = day;
+      const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      if(calendarActivities[dateKey]){
+        td.classList.add('activity');
+        td.title = calendarActivities[dateKey].join(', ');
+        td.setAttribute('tabindex', 0);
+        td.setAttribute('aria-label', `${day} with activities: ${calendarActivities[dateKey].join(', ')}`);
+      } else {
+        td.setAttribute('aria-label', `${day}, no recorded activities`);
+      }
+      tr.appendChild(td);
+    }
+    while(tr.children.length < 7) tr.appendChild(document.createElement('td'));
+    calendarBody.appendChild(tr);
+  }
+  const today = new Date();
+  generateCalendar(today.getFullYear(), today.getMonth());
+
+  document.getElementById('addActivityBtn').addEventListener('click', () => {
+    const dateVal = activityDateInput.value;
+    if(!dateVal){
+      activityMsg.textContent = '⚠️ Please select a date.';
+      return;
+    }
+    const activity = activityTypeSelect.value || 'Activity';
+    if(!calendarActivities[dateVal]){
+      calendarActivities[dateVal] = [];
+    }
+    calendarActivities[dateVal].push(activity);
+    localStorage.setItem(calendarActivitiesKey, JSON.stringify(calendarActivities));
+    activityMsg.textContent = `Added "${activity}" to ${dateVal}`;
+    generateCalendar(today.getFullYear(), today.getMonth());
+    setTimeout(()=> activityMsg.textContent = '', 4000);
+  });
+
+  //=== Budget & Cost Calculator ===
+  const seedCostBudget = document.getElementById('seedCostBudget');
+  const waterCostBudget = document.getElementById('waterCostBudget');
+  const fertilizerCostBudget = document.getElementById('fertilizerCostBudget');
+  const pesticideCostBudget = document.getElementById('pesticideCostBudget');
+  const calcBudgetBtn = document.getElementById('calcBudgetBtn');
+  const budgetResult = document.getElementById('budgetResult');
+
+  function calculateBudget(){
+    // Use quantity from Profit Calculator as hectares approx
+    const hectares = parseFloat(document.getElementById('quantity').value) || 1;
+    const sc = parseFloat(seedCostBudget.value) || 0;
+    const wc = parseFloat(waterCostBudget.value) || 0;
+    const fc = parseFloat(fertilizerCostBudget.value) || 0;
+    const pc = parseFloat(pesticideCostBudget.value) || 0;
+
+    if(sc<0 || wc<0 || fc<0 || pc<0){
+      budgetResult.textContent = '⚠️ Please enter valid non-negative costs.';
+      return;
+    }
+
+    // Approximate water liters = hectares * 10000 * 6 liters (avg crop assumption)
+    const waterLiters = hectares * 10000 * 6;
+
+    const seedTotal = sc * hectares;
+    const waterTotal = wc * waterLiters;
+    const fertilizerTotal = fc * hectares;
+    const pesticideTotal = pc * hectares;
+    const totalBudget = seedTotal + waterTotal + fertilizerTotal + pesticideTotal;
+
+    budgetResult.textContent = `Total Estimated Budget: ₹${totalBudget.toFixed(2)} (Seed: ₹${seedTotal.toFixed(2)}, Water: ₹${waterTotal.toFixed(2)}, Fertilizer: ₹${fertilizerTotal.toFixed(2)}, Pesticide: ₹${pesticideTotal.toFixed(2)})`;
+  }
+  calcBudgetBtn.addEventListener('click', calculateBudget);
+
+  //=== Voice Input & Commands ===
+  const voiceBtn = document.getElementById('voiceBtn');
+  const voiceStatus = document.getElementById('voiceStatus');
+  let recognition = null;
+  let listening = false;
+
+  if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.addEventListener('start', () => {
+      listening = true;
+      voiceStatus.textContent = '🎧 Listening...';
+      voiceBtn.setAttribute('aria-pressed', 'true');
+      voiceBtn.classList.add('listening');
+    });
+    recognition.addEventListener('end', () => {
+      listening = false;
+      voiceStatus.textContent = '🛑 Stopped Listening.';
+      voiceBtn.setAttribute('aria-pressed', 'false');
+      voiceBtn.classList.remove('listening');
+    });
+    recognition.addEventListener('result', e => {
+      const transcript = e.results[0][0].transcript.toLowerCase();
+      voiceStatus.textContent = `🗣 Heard: "${transcript}"`;
+      handleVoiceCommand(transcript);
+    });
+  } else {
+    voiceBtn.disabled = true;
+    voiceStatus.textContent = '⚠️ Your browser does not support voice recognition.';
+  }
+
+  voiceBtn.addEventListener('click', () => {
+    if(listening){
+      recognition.stop();
+    } else {
+      recognition.start();
+    }
+  });
+
+  function handleVoiceCommand(cmd){
+    if(cmd.includes('calculate profit') || cmd.includes('profit')){
+      calcProfitBtn.click();
+      showNotification('🔊 Calculating Profit...');
+    } else if(cmd.includes('calculate budget') || cmd.includes('budget')){
+      calcBudgetBtn.click();
+      showNotification('🔊 Calculating Budget...');
+    } else if(cmd.includes('harvest time') || cmd.includes('harvest')){
+      calcHarvestBtn.click();
+      showNotification('🔊 Calculating Harvest Time...');
+    } else if(cmd.includes('add activity')){
+      activityDateInput.value = new Date().toISOString().slice(0,10);
+      activityTypeSelect.value = 'Planting';
+      document.getElementById('addActivityBtn').click();
+      showNotification('🔊 Added Planting Activity for Today');
+    } else if(cmd.includes('post forum') || cmd.includes('send message')){
+      let msg = prompt('🗣 Please enter your forum message:');
+      if(msg && msg.trim().length > 0){
+        forumInput.value = msg.trim();
+        sendForumBtn.click();
+        showNotification('🔊 Forum message posted.');
+      }
+    } else {
+      showNotification('❓ Voice command not recognized.');
+    }
+  }
+</script>
+</body>
+</html>

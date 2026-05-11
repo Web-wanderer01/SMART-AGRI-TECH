@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>🌾 Enhanced Smart Farm Analysis & Tools</title>
+<style>
+  /* Reset & base */
+  * {box-sizing: border-box;}
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+    color: #2e7d32;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 50px;
+  }
+  header {
+    background: #388e3c;
+    width: 100%;
+    padding: 25px 10%;
+    color: white;
+    text-align: center;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    letter-spacing: 1.1px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  header h1 {
+    margin: 0 0 7px;
+    font-size: 2.5rem;
+  }
+  header p {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    opacity: 0.9;
+  }
+  main.container {
+    width: 95%;
+    max-width: 1200px;
+    margin: 30px auto 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 900px) {
+    main.container {
+      grid-template-columns: 1fr;
+      padding: 0 10px;
+    }
+  }
+  section.card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgb(46 125 50 / 0.3);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+  }
+  section.card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #1b5e20;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  label {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  select, input[type=number], input[type=text], textarea {
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #a5d6a7;
+    font-size: 1rem;
+    width: 100%;
+    outline-color: #4caf50;
+    transition: border-color 0.3s ease;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    resize: vertical;
+  }
+  select:focus, input[type=number]:focus, input[type=text]:focus, textarea:focus {
+    border-color: #388e3c;
+  }
+  button {
+    background: #43a047;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 25px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    box-shadow: 0 5px 15px rgb(67 160 71 / 0.3);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+  }
+  button:hover, button:focus {
+    background: #2e7d32;
+    outline: none;
+  }
+  .result, .sensor-output, .tip {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-top: 10px;
+    color: #1b5e20;
+    min-height: 2.5em;
+  }
+  #notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #81c784;
+    color: #1b5e20;
+    padding: 15px 25px;
+    border-radius: 40px;
+    box-shadow: 0 5px 20px rgb(46 125 50 / 0.6);
+    font-weight: 700;
+    font-size: 1rem;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    z-index: 100;
+  }
+  #calendar {
+    max-width: 100%;
+    border-collapse: collapse;
+  }
+  #calendar th, #calendar td {
+    border: 1px solid #a5d6a7;
+    padding: 8px;
+    text-align: center;
+    font-weight: 600;
+    color: #2e7d32;
+  }
+  #calendar th {
+    background: #c8e6c9;
+  }
+  #calendar td.activity {
+    background: #a5d6a7;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  #tipsFeed {
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 8px;
+    border: 2px solid #a5d6a7;
+    border-radius: 8px;
+    background: #e8f5e9;
+  }
+  #forumMessages {
+    max-height: 180px;
+    overflow-y: auto;
+    border: 2px solid #a5d6a7;
+    border-radius: 8px;
+    background: #e8f5e9;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: #2e7d32;
+    font-weight: 600;
+  }
+  footer {
+    width: 100%;
+    background: #2e7d32;
+    color: #c8e6c9;
+    text-align: center;
+    padding: 18px 10%;
+    font-weight: 600;
+    margin-top: 30px;
+    box-shadow: 0 -2px 5px rgb(46 125 50 / 0.3);
+    font-size: 0.95rem;
+  }
+  /* Speech button style */
+  #voiceBtn {
+    margin-left: 10px;
+    background: #81c784;
+    font-weight: 700;
+  }
+  #voiceBtn.listening {
+    background: #f44336;
+  }
+  /* Export report button */
+  #exportBtn {
+    margin-top: 15px;
+  }
+</style>
+</head>
+<body>
+<header role="banner">
+  <h1>🌾 Enhanced Smart Farm Analysis & Tools</h1>
+  <p>Real-time Insights, Planning, and Community Support for Farmers</p>
+</header>
+
+<main class="container" role="main" aria-label="Farm Analysis and Tools">
+
+  <!-- Farm Profiles (Multi-farm support) -->
+  <section class="card" aria-labelledby="farmProfilesTitle" >
+    <h2 id="farmProfilesTitle">🌿 Farm Profiles (Multi-Farm Support)</h2>
+    <label for="existingFarms">Select Farm Profile</label>
+    <select id="existingFarms" aria-label="Select existing farm profile"></select>
+    <button id="deleteFarmBtn" aria-label="Delete selected farm profile" title="Delete farm profile">Delete Profile</button>
+
+    <label for="newFarmName" style="margin-top:15px;">New Farm Name</label>
+    <input type="text" id="newFarmName" placeholder="Farm name" aria-label="New farm name" />
+
+    <label for="cropType">Select Crop Type</label>
+    <select id="cropType" aria-required="true" aria-describedby="cropDesc">
+      <option value="wheat">Wheat</option>
+      <option value="corn">Corn</option>
+      <option value="rice">Rice</option>
+      <option value="soybean">Soybean</option>
+      <option value="tomato">Tomato</option>
+      <option value="potato">Potato</option>
+    </select>
+    <small id="cropDesc" style="color:#388e3c;">Crop affects water, fertilizer & pesticide needs.</small>
+
+    <label for="farmArea" style="margin-top:20px;">Farm Area (hectares)</label>
+    <input type="number" id="farmArea" min="0.1" step="0.1" placeholder="e.g., 2.5" aria-required="true" />
+
+    <button id="saveProfileBtn" aria-live="polite" aria-label="Save farm profile">Save Profile</button>
+    <p class="result" id="profileSavedMsg" aria-live="polite" style="color:#2e7d32;"></p>
+  </section>
+
+  <!-- IoT Sensor Sim -->
+  <section class="card" aria-labelledby="sensorTitle">
+    <h2 id="sensorTitle">📡 IoT Sensor Simulation</h2>
+    <div class="sensor-output" aria-live="polite" id="sensorData" style="font-weight: 700;">Loading sensor data...</div>
+    <button id="startSensorsBtn" aria-label="Start Simulated IoT Sensor Data">Start Simulation</button>
+    <button id="stopSensorsBtn" aria-label="Stop Simulated IoT Sensor Data" style="margin-left:10px;" disabled>Stop Simulation</button>
+  </section>
+
+  <!-- Calendar with Activities -->
+  <section class="card" aria-labelledby="calendarTitle">
+    <h2 id="calendarTitle">📅 Crop Growth Timeline & Calendar</h2>
+    <table id="calendar" aria-label="Crop activities calendar" role="grid" tabindex="0">
+      <thead>
+        <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
+      </thead>
+      <tbody id="calendarBody"></tbody>
+    </table>
+
+    <label for="activityDate">Add Activity Date</label>
+    <input type="date" id="activityDate" aria-required="true" />
+    <label for="activityType">Activity Type</label>
+    <select id="activityType" aria-required="true">
+      <option value="Planting">Planting</option>
+      <option value="Fertilizing">Fertilizing</option>
+      <option value="Irrigating">Irrigating</option>
+      <option value="Pesticide Application">Pesticide Application</option>
+      <option value="Harvest">Harvest</option>
+    </select>
+    <button id="addActivityBtn" aria-label="Add farming activity to calendar">Add Activity</button>
+    <p class="result" id="activityMsg" style="color:#2e7d32;" aria-live="polite"></p>
+  </section>
+
+  <!-- Farming Tips Feed -->
+  <section class="card" aria-labelledby="tipsTitle">
+    <h2 id="tipsTitle">📖 Farming Tips & Articles Feed</h2>
+    <div id="tipsFeed" role="feed" tabindex="0" aria-live="polite" aria-atomic="true" aria-label="Farming tips feed">
+      Loading tips...
+    </div>
+  </section>
+
+  <!-- Budget Calculator -->
+  <section class="card" aria-labelledby="budgetTitle">
+    <h2 id="budgetTitle">💰 Budget & Cost Calculator</h2>
+    <label for="seedCost">Seed Cost (per hectare, USD)</label>
+    <input type="number" id="seedCost" step="0.01" value="50" min="0" />
+    <label for="waterCost">Water Cost (per liter, USD)</label>
+    <input type="number" id="waterCost" step="0.0001" value="0.001" min="0" />
+    <label for="fertilizerCost">Fertilizer Cost (per hectare, USD)</label>
+    <input type="number" id="fertilizerCost" step="0.01" value="30" min="0" />
+    <label for="pesticideCost">Pesticide Cost (per hectare, USD)</label>
+    <input type="number" id="pesticideCost" step="0.01" value="25" min="0" />
+    <button id="calcBudgetBtn">Calculate Estimated Budget</button>
+    <p class="result" id="budgetResult" aria-live="polite"></p>
+  </section>
+
+  <!-- Forum/Q&A -->
+  <section class="card" aria-labelledby="forumTitle">
+    <h2 id="forumTitle">💬 Farmer Forum & Q&A Chatbox</h2>
+    <div id="forumMessages" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <label for="forumInput">Ask a question or share advice</label>
+    <textarea id="forumInput" rows="3" aria-label="Forum input"></textarea>
+    <button id="sendForumBtn">Send</button>
+  </section>
+
+  <!-- Export & Share Report -->
+  <section class="card" aria-labelledby="exportTitle">
+    <h2 id="exportTitle">📄 Export & Share Farm Report</h2>
+    <button id="exportBtn">Export Report as PDF</button>
+    <p style="font-size: 0.9rem; margin-top:5px; color: #2e7d32;">(Exports current selected profile and recommendations)</p>
+  </section>
+
+  <!-- Voice Input & Alerts -->
+  <section class="card" aria-labelledby="voiceTitle">
+    <h2 id="voiceTitle">🗣️ Voice Input & Alerts</h2>
+    <label for="voiceCommand">Click and Speak a Command (e.g., "generate recommendations")</label><br />
+    <button id="voiceBtn" aria-live="polite" aria-pressed="false" aria-label="Start voice input">🎙️ Start Listening</button>
+    <p class="result" id="voiceStatus" aria-live="polite" style="margin-top:10px;"></p>
+  </section>
+
+</main>
+
+<div id="notification" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+<footer role="contentinfo">
+  &copy; 2026 Smart Farm Solutions 🌱 | Empowering farmers worldwide
+</footer>
+
+<script>
+  // === Multi-Farm Profile Support ===
+  const farmsKey = 'smartFarmProfiles';
+  let farms = JSON.parse(localStorage.getItem(farmsKey)) || [];
+  const existingFarmsSelect = document.getElementById('existingFarms');
+  const cropTypeInput = document.getElementById('cropType');
+  const farmAreaInput = document.getElementById('farmArea');
+  const profileSavedMsg = document.getElementById('profileSavedMsg');
+  const newFarmNameInput = document.getElementById('newFarmName');
+  const deleteFarmBtn = document.getElementById('deleteFarmBtn');
+
+  function populateFarmSelect(){
+    existingFarmsSelect.innerHTML = '';
+    if(farms.length === 0){
+      existingFarmsSelect.innerHTML = '<option value="" disabled>No farm profiles available</option>';
+      deleteFarmBtn.disabled = true;
+      cropTypeInput.value = 'wheat';
+      farmAreaInput.value = '';
+      return;
+    }
+    farms.forEach((f,i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `${f.name} - ${f.crop} (${f.area} ha)`;
+      existingFarmsSelect.appendChild(opt);
+    });
+    deleteFarmBtn.disabled = false;
+  }
+
+  function loadFarmProfile(index=null){
+    if(index === null) index = existingFarmsSelect.value;
+    if(index === null || index === '') return;
+    const f = farms[index];
+    cropTypeInput.value = f.crop;
+    farmAreaInput.value = f.area;
+    newFarmNameInput.value = f.name;
+    profileSavedMsg.textContent = '';
+  }
+
+  document.getElementById('saveProfileBtn').addEventListener('click', () => {
+    const crop = cropTypeInput.value;
+    const area = parseFloat(farmAreaInput.value);
+    const name = (newFarmNameInput.value || '').trim();
+    if (!area || area <= 0) {
+      profileSavedMsg.textContent = 'Please enter a valid farm area.';
+      return;
+    }
+    if (!name) {
+      profileSavedMsg.textContent = 'Please enter a farm name.';
+      return;
+    }
+    // Check if we are updating existing or adding new (selected index)
+    let idx = existingFarmsSelect.value;
+    if(idx === '' || idx === null || idx === undefined){
+      // add new
+      farms.push({name, crop, area});
+      profileSavedMsg.textContent = `Added farm "${name}" successfully! 🌱`;
+      existingFarmsSelect.value = farms.length -1;
+    } else {
+      farms[idx] = {name, crop, area};
+      profileSavedMsg.textContent = `Updated farm "${name}" successfully! 🌱`;
+    }
+    localStorage.setItem(farmsKey, JSON.stringify(farms));
+    populateFarmSelect();
+    loadFarmProfile(existingFarmsSelect.value);
+    setTimeout(()=>{profileSavedMsg.textContent='';}, 6000);
+  });
+
+  existingFarmsSelect.addEventListener('change', () => { 
+    loadFarmProfile(existingFarmsSelect.value);
+    clearRecommendations();
+  });
+
+  deleteFarmBtn.addEventListener('click', () => {
+    const idx = existingFarmsSelect.value;
+    if(idx === '' || idx === null) return;
+    if(confirm(`Delete farm profile "${farms[idx].name}"? This action is permanent.`)){
+      farms.splice(idx,1);
+      localStorage.setItem(farmsKey, JSON.stringify(farms));
+      populateFarmSelect();
+      clearForm();
+      clearRecommendations();
+    }
+  });
+
+  function clearForm(){
+    cropTypeInput.value = 'wheat';
+    farmAreaInput.value = '';
+    newFarmNameInput.value = '';
+    profileSavedMsg.textContent = '';
+  }
+  populateFarmSelect();
+
+  // === Crop Data ===
+  const cropData = {
+    wheat: {water: 6, fertilizer: "NPK 12-12-12, biweekly", pesticide: "Apply sulfur dust weekly"},
+    corn: {water: 8, fertilizer: "NPK 16-16-16, biweekly", pesticide: "Use pyrethrin spray every 10 days"},
+    rice: {water: 10, fertilizer: "Apply urea weekly", pesticide: "Use chlorpyrifos after 3 weeks of transplant"},
+    soybean: {water: 5, fertilizer: "NPK 10-10-10 every 2 weeks", pesticide: "Neem oil spray weekly"},
+    tomato: {water: 4, fertilizer: "NPK 15-15-15 every week", pesticide: "Use copper fungicide every 7 days"},
+    potato: {water: 7, fertilizer: "Potassium rich, NPK 10-20-20 every 2 weeks", pesticide: "Use mancozeb spray twice a week"},
+  };
+
+  // === Recommendations & Reminder ===
+  const waterP = document.createElement('p');
+  const fertilizerP = document.createElement('p');
+  const pesticideP = document.createElement('p');
+  waterP.id = 'water';
+  fertilizerP.id = 'fertilizer';
+  pesticideP.id = 'pesticide';
+
+  // Add recommendations container in DOM - create card or reuse?
+  const recommendationCard = document.createElement('section');
+  recommendationCard.classList.add('card');
+  recommendationCard.setAttribute('aria-labelledby','recommendationTitle');
+  recommendationCard.style.gridColumn = '1 / -1';
+  recommendationCard.innerHTML = `<h2 id="recommendationTitle">💧 Water & Fertilizer Recommendations</h2>`;
+  recommendationCard.appendChild(waterP);
+  recommendationCard.appendChild(fertilizerP);
+  recommendationCard.appendChild(pesticideP);
+  const genBtn = document.createElement('button');
+  genBtn.id = 'generateBtn';
+  genBtn.textContent = 'Generate Recommendations';
+  genBtn.setAttribute('aria-label', 'Generate water, fertilizer, and pesticide recommendations');
+  recommendationCard.appendChild(genBtn);
+
+  // Append this card inside main container after farm profile card
+  const mainContainer = document.querySelector('main.container');
+  mainContainer.insertBefore(recommendationCard, mainContainer.children[1] || null);
+
+  function clearRecommendations(){
+    waterP.textContent = '--';
+    fertilizerP.textContent = '--';
+    pesticideP.textContent = '--';
+  }
+  clearRecommendations();
+
+  genBtn.addEventListener('click', () => {
+    if(farms.length === 0){
+      alert('Please create and save a farm profile first!');
+      return;
+    }
+    const idx = existingFarmsSelect.value;
+    if(idx === '' || idx === null){
+      alert('Please select a farm profile!');
+      return;
+    }
+    const profile = farms[idx];
+    const crop = profile.crop;
+    const area = profile.area;
+    if(!cropData[crop]){
+      alert('Invalid crop in profile.');
+      return;
+    }
+    const baseWater = cropData[crop].water;
+    const fertilizer = cropData[crop].fertilizer;
+    const pesticide = cropData[crop].pesticide;
+
+    // Approximate plants per hectare
+    const plantsCount = area * 10000;
+
+    // Weather adjustment - simplistic: simulate random adjustment to illustrate
+    const weatherAdjustment = 1 + (Math.random()*0.3 - 0.15); // ±15%
+
+    const totalWater = Math.round(plantsCount * baseWater * weatherAdjustment).toLocaleString();
+
+    waterP.textContent = `Estimated water needed: approx. ${totalWater} liters/day for ${plantsCount.toLocaleString()} plants. Adjust on weather conditions.`;
+    fertilizerP.textContent = `Fertilizer: ${fertilizer}`;
+    pesticideP.textContent = `Pesticide: ${pesticide}`;
+
+    showNotification(`Reminders set for watering & fertilizing your ${crop} farm.`);
+
+    // Save last recommendations per farm for offline & export
+    profile.lastRecommendations = {
+      water: waterP.textContent,
+      fertilizer: fertilizerP.textContent,
+      pesticide: pesticideP.textContent,
+      timestamp: new Date().toISOString()
+    };
+    farms[idx] = profile;
+    localStorage.setItem(farmsKey, JSON.stringify(farms));
+  });
+
+  // === Notification ===
+  const notification = document.getElementById('notification');
+  function showNotification(msg, timeout=6000) {
+    notification.textContent = msg;
+    notification.style.display = 'flex';
+    setTimeout(() => {
+      notification.style.display = 'none';
+    }, timeout);
+  }
+
+  // === IoT Sensor Simulation ===
+  const sensorOutput = document.getElementById('sensorData');
+  let sensorInterval = null;
+
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function updateSensorData() {
+    // Simulate soil moisture (%), temperature (°C), humidity (%)
+    const soilMoisture = getRandomInt(30, 80);
+    const temperature = getRandomInt(15, 35);
+    const humidity = getRandomInt(40, 85);
+    sensorOutput.textContent =
+      `Soil Moisture: ${soilMoisture}% | Temperature: ${temperature}°C | Humidity: ${humidity}%`;
+  }
+
+  document.getElementById('startSensorsBtn').addEventListener('click', () => {
+    if(sensorInterval) return;
+    updateSensorData();
+    sensorInterval = setInterval(updateSensorData, 3000);
+    document.getElementById('startSensorsBtn').disabled = true;
+    document.getElementById('stopSensorsBtn').disabled = false;
+  });
+  document.getElementById('stopSensorsBtn').addEventListener('click', () => {
+    clearInterval(sensorInterval);
+    sensorInterval = null;
+    sensorOutput.textContent = 'Sensor simulation stopped.';
+    document.getElementById('startSensorsBtn').disabled = false;
+    document.getElementById('stopSensorsBtn').disabled = true;
+  });
+
+  // === Calendar with Activities ===
+  const calendarBody = document.getElementById('calendarBody');
+  const activityDateInput = document.getElementById('activityDate');
+  const activityTypeSelect = document.getElementById('activityType');
+  const activityMsg = document.getElementById('activityMsg');
+  const calendarActivitiesKey = 'smartFarmCalendarActivities';
+  let calendarActivities = JSON.parse(localStorage.getItem(calendarActivitiesKey)) || {};
+
+  // Basic calendar for current month
+  function generateCalendar(year, month){
+    calendarBody.innerHTML = '';
+    const date = new Date(year, month, 1);
+    const firstDay = date.getDay();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+
+    let tr = document.createElement('tr');
+    // fill initial empty cells
+    for(let i=0; i < firstDay; i++){
+      const td = document.createElement('td');
+      tr.appendChild(td);
+    }
+    for(let day=1; day <= daysInMonth; day++){
+      if(tr.children.length === 7){
+        calendarBody.appendChild(tr);
+        tr = document.createElement('tr');
+      }
+      const td = document.createElement('td');
+      td.textContent = day;
+      const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      if(calendarActivities[dateKey]){
+        td.classList.add('activity');
+        td.title = calendarActivities[dateKey].join(', ');
+        td.setAttribute('tabindex', 0);
+        td.setAttribute('aria-label', `${day} with activities: ${calendarActivities[dateKey].join(', ')}`);
+      } else {
+        td.setAttribute('aria-label', `${day}, no recorded activities`);
+      }
+      tr.appendChild(td);
+    }
+    // trailing empty cells at end of month row
+    while(tr.children.length < 7){
+      const td = document.createElement('td');
+      tr.appendChild(td);
+    }
+    calendarBody.appendChild(tr);
+  }
+  const today = new Date();
+  generateCalendar(today.getFullYear(), today.getMonth());
+
+  document.getElementById('addActivityBtn').addEventListener('click', () => {
+    const dateVal = activityDateInput.value;
+    if(!dateVal){
+      activityMsg.textContent = 'Please select a date.';
+      return;
+    }
+    const activity = activityTypeSelect.value || 'Activity';
+    if(!calendarActivities[dateVal]){
+      calendarActivities[dateVal] = [];
+    }
+    calendarActivities[dateVal].push(activity);
+    localStorage.setItem(calendarActivitiesKey, JSON.stringify(calendarActivities));
+    activityMsg.textContent = `Added "${activity}" to ${dateVal}`;
+    generateCalendar(today.getFullYear(), today.getMonth());
+    setTimeout(()=> activityMsg.textContent = '', 4000);
+  });
+
+  // === Farming Tips & Articles Feed ===
+  // For demo: use static tips, could fetch from API in real app
+  const tipsFeed = document.getElementById('tipsFeed');
+  const farmingTips = [
+    "Rotate crops annually to improve soil fertility.",
+    "Use organic compost to enrich your soil naturally.",
+    "Water early morning or late evening to reduce evaporation.",
+    "Regularly inspect crops for pests to reduce damage.",
+    "Plant cover crops during off-season to prevent soil erosion.",
+    "Use drip irrigation to save water and improve efficiency.",
+    "Record all farm activities for better planning."
+  ];
+
+  function showRandomTip(){
+    const tip = farmingTips[Math.floor(Math.random() * farmingTips.length)];
+    tipsFeed.textContent = tip;
+  }
+  showRandomTip();
+  setInterval(showRandomTip, 12000);
+
+  // === Budget & Cost Calculator ===
+  const seedCostInput = document.getElementById('seedCost');
+  const waterCostInput = document.getElementById('waterCost');
+  const fertilizerCostInput = document.getElementById('fertilizerCost');
+  const pesticideCostInput = document.getElementById('pesticideCost');
+  const budgetResult = document.getElementById('budgetResult');
+
+  document.getElementById('calcBudgetBtn').addEventListener('click', () => {
+    if(farms.length === 0){
+      alert('Please create and save a farm profile first!');
+      return;
+    }
+    const idx = existingFarmsSelect.value;
+    if(idx === '' || idx === null){
+      alert('Please select a farm profile!');
+      return;
+    }
+    const farm = farms[idx];
+    // Calculate budget using last recommendations water value or base:
+    let waterLiters = 0;
+    if(farm.lastRecommendations && farm.lastRecommendations.water){
+      const matchWater = farm.lastRecommendations.water.match(/approx\. ([\d,]+)/);
+      if(matchWater) waterLiters = Number(matchWater[1].replace(/,/g,''));
+    }
+    else{
+      // fallback approximate
+      waterLiters = farm.area * 10000 * cropData[farm.crop].water;
+    }
+    const seedCost = Number(seedCostInput.value) * farm.area;
+    const waterCost = Number(waterCostInput.value) * waterLiters;
+    const fertilizerCost = Number(fertilizerCostInput.value) * farm.area;
+    const pesticideCost = Number(pesticideCostInput.value) * farm.area;
+    const total = seedCost + waterCost + fertilizerCost + pesticideCost;
+    budgetResult.textContent = `Estimated Budget: $${total.toFixed(2)} (Seeds: $${seedCost.toFixed(2)}, Water: $${waterCost.toFixed(2)}, Fertilizer: $${fertilizerCost.toFixed(2)}, Pesticides: $${pesticideCost.toFixed(2)})`;
+  });
+
+  // === Forum / Q&A (Very basic) ===
+  const forumMessagesDiv = document.getElementById('forumMessages');
+  const forumInput = document.getElementById('forumInput');
+  const sendForumBtn = document.getElementById('sendForumBtn');
+  const forumKey = 'smartFarmForumHistory';
+  let forumHistory = JSON.parse(localStorage.getItem(forumKey)) || [];
+
+  function renderForum(){
+    forumMessagesDiv.innerHTML = '';
+    forumHistory.forEach(msg => {
+      const p = document.createElement('p');
+      p.textContent = `${msg.user}: ${msg.text}`;
+      forumMessagesDiv.appendChild(p);
+    });
+    forumMessagesDiv.scrollTop = forumMessagesDiv.scrollHeight;
+  }
+
+  sendForumBtn.addEventListener('click', () => {
+    let text = forumInput.value.trim();
+    if(!text) return;
+    // Add user message
+    forumHistory.push({user: "You", text});
+    renderForum();
+    forumInput.value = '';
+    localStorage.setItem(forumKey, JSON.stringify(forumHistory));
+
+    // Simple bot response (rules)
+    setTimeout(() => {
+      let response = "Thank you for your message. Farmers' community will get back soon!";
+      const lowered = text.toLowerCase();
+      if(lowered.includes("water")){
+        response = "Ensure timely watering, preferably early morning or late evening.";
+      } else if(lowered.includes("pest")){
+        response = "Try organic remedies like neem oil or consult local agri-expert.";
+      } else if(lowered.includes("fertilizer")){
+        response = "Balanced NPK fertilizer applications are essential per crop type.";
+      }
+      forumHistory.push({user: "FarmBot", text: response});
+      renderForum();
+      localStorage.setItem(forumKey, JSON.stringify(forumHistory));
+    }, 1000);
+  });
+
+  renderForum();
+
+  // === Export Report as PDF (simple) ===
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    if(farms.length === 0){
+      alert('Please create and save a farm profile first!');
+      return;
+    }
+    const idx = existingFarmsSelect.value;
+    if(idx === '' || idx === null){
+      alert('Please select a farm profile!');
+      return;
+    }
+    const farm = farms[idx];
+    const rec = farm.lastRecommendations || {};
+    const timeStr = rec.timestamp ? new Date(rec.timestamp).toLocaleString() : 'N/A';
+    const text = 
+`Farm Report: ${farm.name}
+Crop Type: ${farm.crop}
+Area: ${farm.area} hectares
+
+Recommendations (as of ${timeStr}):
+- Water: ${rec.water || 'N/A'}
+- Fertilizer: ${rec.fertilizer || 'N/A'}
+- Pesticide: ${rec.pesticide || 'N/A'}
+
+Thank you for using Smart Farm Solutions.`;
+
+    // Create blob and trigger download
+    const blob = new Blob([text], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Farm_Report_${farm.name.replace(/\s+/g,'_')}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showNotification('Farm report exported successfully.');
+  });
+
+  // === Voice Input & Alerts ===
+  const voiceBtn = document.getElementById('voiceBtn');
+  const voiceStatus = document.getElementById('voiceStatus');
+  let recognition = null;
+  let listening = false;
+
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.addEventListener('start', () => {
+      listening = true;
+      voiceStatus.textContent = 'Listening...';
+      voiceBtn.setAttribute('aria-pressed', 'true');
+      voiceBtn.classList.add('listening');
+    });
+    recognition.addEventListener('end', () => {
+      listening = false;
+      voiceStatus.textContent = 'Stopped listening.';
+      voiceBtn.setAttribute('aria-pressed', 'false');
+      voiceBtn.classList.remove('listening');
+    });
+    recognition.addEventListener('result', e => {
+      const transcript = e.results[0][0].transcript.toLowerCase();
+      voiceStatus.textContent = `Heard: "${transcript}"`;
+      handleVoiceCommand(transcript);
+    });
+  } else {
+    voiceBtn.disabled = true;
+    voiceStatus.textContent = 'Voice recognition not supported in this browser.';
+  }
+
+  voiceBtn.addEventListener('click', () => {
+    if(listening) {
+      recognition.stop();
+    } else {
+      recognition.start();
+    }
+  });
+
+  function handleVoiceCommand(cmd){
+    if(cmd.includes('generate')){
+      genBtn.click();
+      showNotification('Generating recommendations via voice command.');
+    } else if(cmd.includes('export')){
+      document.getElementById('exportBtn').click();
+      showNotification('Exporting report via voice command.');
+    } else if(cmd.includes('start sensors')){
+      document.getElementById('startSensorsBtn').click();
+      showNotification('Starting sensor simulation via voice command.');
+    } else if(cmd.includes('stop sensors')){
+      document.getElementById('stopSensorsBtn').click();
+      showNotification('Stopping sensor simulation via voice command.');
+    } else if(cmd.includes('add activity')){
+      const todayDate = new Date().toISOString().slice(0,10);
+      activityDateInput.value = todayDate;
+      activityTypeSelect.value = 'Planting';
+      document.getElementById('addActivityBtn').click();
+      showNotification('Added planting activity for today via voice command.');
+    } else {
+      showNotification('Voice command not recognized.');
+    }
+  }
+
+</script>
+</body>
+</html>

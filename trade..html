@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🌾 Specialized Trade - Innovative Dry Crops & Rare Spices Marketplace</title>
+<style>
+  /* Reset & base */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body {
+    background: #f5f7fa;
+    color: #222;
+    transition: background 0.4s, color 0.4s;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  nav {
+    background: #2e7d32;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  nav h2 {
+    user-select: none;
+    font-weight: 700;
+    font-size: 1.8rem;
+  }
+  nav button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.6rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .hero {
+    height: 60vh;
+    background:
+      linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+      url("https://images.unsplash.com/photo-1606788075761-8a5c5e6c8b6c?auto=format&fit=crop&w=1470&q=80") no-repeat center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+  }
+  .hero h1 {
+    font-size: 3rem;
+    max-width: 600px;
+    user-select: none;
+    line-height: 1.2;
+    padding: 0 20px;
+  }
+  main {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
+    gap: 25px;
+  }
+  section {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(85, 135, 73, 0.18);
+    padding: 25px 28px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  section:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(67,160,71,0.25);
+  }
+  section h2 {
+    margin-bottom: 18px;
+    color: #2e7d32;
+    font-weight: 900;
+    font-size: 1.9rem;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+  }
+  .card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(46, 125, 50, 0.15);
+    background: #f7fbe9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    position: relative;
+  }
+  .card img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+  }
+  .card h3 {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #2e7d32;
+    padding: 12px 8px 8px 8px;
+    text-align: center;
+  }
+  .card button {
+    background: #43a047;
+    border: none;
+    border-radius: 0 0 12px 12px;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+    font-size: 1rem;
+    outline-offset: 2px;
+  }
+  .card button:hover,
+  .card button:focus {
+    background: #2e7d32;
+    outline: none;
+  }
+  label {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 12px;
+    user-select: none;
+  }
+  input, select, textarea {
+    font-family: inherit;
+    border-radius: 8px;
+    border: 2px solid #a5d6a7;
+    padding: 10px;
+    font-size: 1rem;
+    margin-top: 6px;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #4caf50;
+    outline: none;
+  }
+  textarea {
+    resize: vertical;
+  }
+  button.primary {
+    margin-top: 20px;
+    align-self: flex-start;
+  }
+  p.result, p.notify-text {
+    font-weight: 700;
+    margin-top: 16px;
+    color: #1b5e20;
+    min-height: 2em;
+  }
+  #notify {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #2e7d32;
+    color: white;
+    padding: 16px 28px;
+    border-radius: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+    font-weight: 700;
+    font-size: 1rem;
+    display: none;
+    user-select: none;
+    z-index: 1100;
+  }
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-weight: 600;
+    color: #567d46;
+    user-select: none;
+  }
+  /* Tooltip */
+  .tooltip {
+    position: relative;
+    cursor: help;
+  }
+  .tooltip:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 140%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4caf50;
+    color: white;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 1001;
+    pointer-events: none;
+    opacity: 0.9;
+  }
+  /* Responsive Enhancements */
+  @media(max-width:540px){
+    nav h2 {
+      font-size: 1.3rem;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      padding: 0 10px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <h2>💰 Specialized Trade</h2>
+  <button aria-label="Toggle Dark Mode" id="themeToggleBtn" title="Toggle Dark Mode">🌗</button>
+</nav>
+
+<div class="hero" role="img" aria-label="Dry crops field with sunlight background">
+  <h1>Buy & Sell Dry Crops & Rare Spices with 🌱 Direct Farmer Access</h1>
+</div>
+
+<main>
+
+  <!-- Direct Market Introduction -->
+  <section aria-labelledby="introTitle">
+    <h2 id="introTitle">📦 Direct Market Access</h2>
+    <p>
+      Connecting farmers and buyers directly to purchase and sell dry crops and rare spices without intermediaries.
+      <strong>Maximize profits</strong>, improve transparency, and boost local agriculture economies.
+    </p>
+  </section>
+
+  <!-- Dry Crops Marketplace -->
+  <section aria-labelledby="dryCropMarketplaceTitle">
+    <h2>🌾 Dry Crops Marketplace</h2>
+    <div id="crops" class="grid" aria-live="polite" role="list"></div>
+  </section>
+
+  <!-- Rare Spices Marketplace -->
+  <section aria-labelledby="rareSpicesMarketplaceTitle">
+    <h2>🌶️ Rare Spices Marketplace</h2>
+    <div id="spices" class="grid" aria-live="polite" role="list"></div>
+  </section>
+
+  <!-- Innovative: Real-time Crop Pricing -->
+  <section aria-labelledby="pricingTitle">
+    <h2>📊 Real-Time Crop Pricing</h2>
+    <p>Latest market prices from regional markets to help buyers and sellers negotiate better deals.</p>
+    <select id="cropSelect" aria-label="Select crop for price info">
+      <option value="Wheat">Wheat</option>
+      <option value="Rice">Rice</option>
+      <option value="Millets">Millets</option>
+      <option value="Turmeric">Turmeric</option>
+      <option value="Cardamom">Cardamom</option>
+      <option value="Black Pepper">Black Pepper</option>
+    </select>
+    <button id="fetchPriceBtn" class="primary">Get Latest Price</button>
+    <p id="priceResult" class="result" aria-live="polite"></p>
+  </section>
+
+  <!-- Sell Your Product -->
+  <section aria-labelledby="sellTitle">
+    <h2>📝 Sell Your Product</h2>
+    <form id="sellForm" aria-label="Sell product form">
+      <label for="pname" class="tooltip" data-tip="Name of the crop or spice you want to sell">Product Name</label>
+      <input id="pname" type="text" required minlength="2" placeholder="Product Name" />
+      <label for="ptype" class="tooltip" data-tip="Choose category of your product">Product Type</label>
+      <select id="ptype" required>
+        <option value="">-- Select Type --</option>
+        <option value="Dry Crop">Dry Crop</option>
+        <option value="Rare Spice">Rare Spice</option>
+      </select>
+      <label for="pqty" class="tooltip" data-tip="Quantity available for sale in kg (kilograms)">Quantity (kg)</label>
+      <input id="pqty" type="number" min="0.01" step="0.01" placeholder="e.g. 100" required />
+      <label for="pprice" class="tooltip" data-tip="Expected price per kg in INR">Price (₹/kg)</label>
+      <input id="pprice" type="number" min="0" step="0.01" placeholder="e.g. 150" required />
+      <button type="submit" class="primary">List Product</button>
+    </form>
+  </section>
+
+  <!-- Farming and Trade Insights: Educational Tips & Video -->
+  <section aria-labelledby="educationTitle">
+    <h2>📚 Farming & Trade Insights</h2>
+    <p id="tipText" style="font-weight:600; margin-bottom:10px;" aria-live="polite"></p>
+    <iframe width="100%" height="210" src="https://www.youtube.com/embed/jbALHRWdmIo" title="Featured video: Sustainable Farming Tips" frameborder="0" allowfullscreen></iframe>
+  </section>
+
+</main>
+
+<div id="notify" aria-live="assertive" aria-atomic="true" role="alert"></div>
+
+<footer>
+  &copy; 2026 Specialized Trade | Empowering Farmers & Buyers Directly 🌱
+</footer>
+
+<script>
+  // Data arrays
+  const cropsData = [
+    {name:"Wheat 🌾", img:"https://images.unsplash.com/photo-1574323347407-f5e1c0e3f4f8?auto=format&fit=crop&w=400&q=80"},
+    {name:"Rice 🍚", img:"https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80"},
+    {name:"Millets 🌱", img:"https://images.unsplash.com/photo-1603048297172-c92544798d5a?auto=format&fit=crop&w=400&q=80"}
+  ];
+  const spicesData = [
+    {name:"Turmeric 🌿", img:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=400&q=80"},
+    {name:"Cardamom 🌱", img:"https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=400&q=80"},
+    {name:"Black Pepper 🌶️", img:"https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=400&q=80"}
+  ];
+
+  function showNotification(message, duration=3000){
+    const notify = document.getElementById('notify');
+    notify.textContent = message;
+    notify.style.display = 'block';
+    clearTimeout(notify._timeout);
+    notify._timeout = setTimeout(() => notify.style.display = 'none', duration);
+  }
+
+  // Load marketplace cards
+  function loadMarketplace() {
+    const cropsEl = document.getElementById('crops');
+    cropsEl.innerHTML = cropsData.map(c => `
+      <article class="card" role="listitem" tabindex="0" aria-label="${c.name} card">
+        <img alt="${c.name}" src="${c.img}">
+        <h3>${c.name}</h3>
+        <button type="button" aria-label="Buy ${c.name}" onclick="notifyPurchase('${c.name}')">Buy</button>
+        <button type="button" aria-label="Sell ${c.name}" onclick="notifySell('${c.name}')">Sell</button>
+      </article>
+      `).join('');
+
+    const spicesEl = document.getElementById('spices');
+    spicesEl.innerHTML = spicesData.map(s => `
+      <article class="card" role="listitem" tabindex="0" aria-label="${s.name} card">
+        <img alt="${s.name}" src="${s.img}">
+        <h3>${s.name}</h3>
+        <button type="button" aria-label="Buy ${s.name}" onclick="notifyPurchase('${s.name}')">Buy</button>
+        <button type="button" aria-label="Sell ${s.name}" onclick="notifySell('${s.name}')">Sell</button>
+      </article>
+      `).join('');
+  }
+
+  function notifyPurchase(item){
+    showNotification(`You chose to buy ${item}. Market contact initiated.`);
+  }
+  function notifySell(item){
+    showNotification(`You chose to sell ${item}. Listing details fetched.`);
+  }
+
+  loadMarketplace();
+
+  // SELL PRODUCT FORM HANDLER
+  document.getElementById('sellForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = e.target.pname.value.trim();
+    const type = e.target.ptype.value;
+    const qty = parseFloat(e.target.pqty.value);
+    const price = parseFloat(e.target.pprice.value);
+    if(name.length < 2){
+      alert("Please enter a valid product name.");
+      return;
+    }
+    if(!type){
+      alert("Please select product type.");
+      return;
+    }
+    if(qty <= 0 || isNaN(qty)){
+      alert("Enter a valid quantity.");
+      return;
+    }
+    if(price < 0 || isNaN(price)){
+      alert("Enter a valid price.");
+      return;
+    }
+
+    // Add new product to corresponding marketplace (simulate by adding to data array)
+    if(type === "Dry Crop") {
+      cropsData.push({name:name, img:"https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=400&q=80"});
+      loadMarketplace();
+    } else if(type === "Rare Spice") {
+      spicesData.push({name:name, img:"https://images.unsplash.com/photo-1447299391015-f426f7562218?auto=format&fit=crop&w=400&q=80"});
+      loadMarketplace();
+    }
+    showNotification(`Product "${name}" listed successfully in ${type} marketplace.`);
+    e.target.reset();
+  });
+
+  // REAL-TIME PRICING SIMULATOR (fetch from fake API)
+  const pricesMap = {
+    Wheat: {min: 1800, max: 2200},
+    Rice: {min: 2400, max: 2800},
+    Millets: {min: 1200, max: 1600},
+    Turmeric: {min: 6000, max: 8000},
+    Cardamom: {min: 15000, max: 20000},
+    "Black Pepper": {min: 14000, max: 17000}
+  };
+  document.getElementById('fetchPriceBtn').addEventListener('click', () => {
+    const crop = document.getElementById('cropSelect').value;
+    if(!crop){
+      alert("Please select a crop/spice.");
+      return;
+    }
+    const range = pricesMap[crop];
+    if(!range){
+      document.getElementById('priceResult').textContent = "Price data unavailable.";
+      return;
+    }
+    // Simulate price fetch with random in range & small delay
+    document.getElementById('priceResult').textContent = "Fetching latest price...";
+    setTimeout(() => {
+      const price = (Math.random() * (range.max - range.min) + range.min).toFixed(2);
+      document.getElementById('priceResult').textContent = `Latest price for ${crop}: ₹${price} per quintal (₹${(price/100).toFixed(2)} per kg)`;
+    }, 1200);
+  });
+
+  // Dark Mode toggle with persistence
+  const themeBtn = document.getElementById('themeToggleBtn');
+  function toggleTheme(){
+    document.body.classList.toggle('dark');
+    if(document.body.classList.contains('dark')) {
+      localStorage.setItem('theme','dark');
+      themeBtn.textContent = '☀️';
+      themeBtn.title = 'Switch to Light Mode';
+    } else {
+      localStorage.setItem('theme','light');
+      themeBtn.textContent = '🌗';
+      themeBtn.title = 'Switch to Dark Mode';
+    }
+  }
+  themeBtn.addEventListener('click', toggleTheme);
+  // Load theme on start
+  if(localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    themeBtn.textContent = '☀️';
+    themeBtn.title = 'Switch to Light Mode';
+  }
+
+</script>
+
+</body>
+</html>
